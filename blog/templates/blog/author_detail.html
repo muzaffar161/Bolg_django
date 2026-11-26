@@ -1,0 +1,57 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{{ author.display_name }} | Frame &amp; Field{% endblock %}
+
+{% block content %}
+
+<section class="author-header">
+    <div class="avatar">
+        {% if author.avatar %}
+            <img src="{{ author.avatar.url }}" alt="{{ author.display_name }}">
+        {% else %}
+            {{ author.display_name|slice:":1" }}
+        {% endif %}
+    </div>
+    <div>
+        <p class="eyebrow">CONTRIBUTOR</p>
+        <h1>{{ author.display_name }}</h1>
+        <p class="muted">{{ author.bio|default:"Writer at Frame & Field." }}</p>
+        {% if author.website %}
+            <a href="{{ author.website }}" class="text-link" rel="nofollow">Website &rarr;</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow">FROM THIS AUTHOR</p>
+            <h2>Published stories</h2>
+        </div>
+    </div>
+
+    <div class="article-grid">
+        {% for article in articles %}
+            <article class="article-card">
+                <a href="{% url 'article_detail' article.id %}" class="card-image">
+                    {% if article.image %}<img src="{{ article.image.url }}" alt="{{ article.title }}">{% endif %}
+                    <span class="card-badge">{{ article.category.name }}</span>
+                </a>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span>{{ article.published_at|date:"M j, Y" }}</span>
+                        <span>{{ article.reading_time }} min read</span>
+                    </div>
+                    <h3><a href="{% url 'article_detail' article.id %}">{{ article.title }}</a></h3>
+                    <p class="card-excerpt">{{ article.excerpt }}</p>
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty-state">
+                <p>No published stories yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

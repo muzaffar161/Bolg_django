@@ -1,0 +1,25 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Create account | Frame &amp; Field{% endblock %}
+
+{% block content %}
+
+<div class="auth-page">
+    <div class="auth-card">
+        <p class="eyebrow">JOIN THE CONVERSATION</p>
+        <h1>Create account</h1>
+        <p class="muted">Write stories, comment on articles and build your profile.</p>
+
+        <form method="POST" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+
+        <p class="auth-switch">
+            Already a member? <a href="{% url 'login' %}">Login</a>
+        </p>
+    </div>
+</div>
+
+{% endblock %}

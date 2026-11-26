@@ -1,0 +1,64 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{% if cbv_mode %}All stories (CBV){% else %}All stories{% endif %} | Frame &amp; Field{% endblock %}
+
+{% block content %}
+
+<section class="page-head">
+    <p class="eyebrow">THE ARCHIVE</p>
+    <h1>{% if cbv_mode %}Every story, via ListView{% else %}Every story{% endif %}</h1>
+    <p class="muted">
+        Filter the archive by section or topic. Both the function-based and the
+        class-based view render this page.
+    </p>
+    <div class="head-actions">
+        <a href="{% url 'article_list' %}" class="btn btn-outline btn-sm">Function view</a>
+        <a href="{% url 'article_list_cbv' %}" class="btn btn-outline btn-sm">Class view</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'add_article' %}" class="btn btn-primary btn-sm">Write a story</a>
+        {% endif %}
+    </div>
+</section>
+
+<form method="GET" class="filter-form">
+    <div class="filters-row">
+        <div class="filter-container">
+            <label for="storySearch">Search</label>
+            <input type="text" id="storySearch" name="q" value="{{ search }}"
+                   placeholder="Search stories...">
+        </div>
+
+        <div class="filter-container">
+            <label for="categoryFilter">Section</label>
+            <select id="categoryFilter" name="category">
+                <option value="">All sections</option>
+                {% for category in categories %}
+                    <option value="{{ category.slug }}"
+                            {% if category.slug == selected_category %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-container filter-submit">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn btn-primary">Apply</button>
+        </div>
+    </div>
+
+    <div class="tag-filters">
+        <span class="tag-label">Topics:</span>
+        <a href="{% url 'article_list' %}" class="tag-pill {% if not selected_tag %}active{% endif %}">All</a>
+        {% for tag in tags %}
+            <a href="{% url 'tag_detail' tag.slug %}"
+               class="tag-pill {% if tag.slug == selected_tag %}active{% endif %}">
+                {{ tag.name }}
+            </a>
+        {% endfor %}
+    </div>
+</form>
+
+{% include "blog/_article_grid.html" %}
+
+{% endblock %}

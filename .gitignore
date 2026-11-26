@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.sqlite3
+.env
+venv/
+.venv/
+.pytest_cache/
+staticfiles/
+*.log
+media/article_covers/*
+!media/article_covers/.gitkeep
+media/author_avatars/*
+!media/author_avatars/.gitkeep
+.DS_Store

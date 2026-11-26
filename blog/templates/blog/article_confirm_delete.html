@@ -1,0 +1,21 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Delete story | Frame &amp; Field{% endblock %}
+
+{% block content %}
+
+<div class="form-page">
+    <div class="form-card confirm-card">
+        <p class="eyebrow">PLEASE CONFIRM</p>
+        <h1>Delete this story?</h1>
+        <p>"{{ object.title }}" and all of its comments will be removed permanently.</p>
+
+        <form method="POST" class="form-actions">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, delete</button>
+            <a href="{% url 'article_detail' object.id %}" class="btn btn-ghost">Keep it</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

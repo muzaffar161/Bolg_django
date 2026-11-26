@@ -1,0 +1,25 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Categories | Frame &amp; Field{% endblock %}
+
+{% block content %}
+
+<section class="page-head">
+    <p class="eyebrow">EXPLORE BY SECTION</p>
+    <h1>Four ways into the story</h1>
+    <p class="muted">Pick a section and read everything we have published there.</p>
+</section>
+
+<div class="category-grid">
+    {% for category in categories %}
+        <a href="{% url 'category_detail' category.slug %}" class="category-card"
+           style="--accent: {{ category.accent }}">
+            <span class="category-number">0{{ forloop.counter }}</span>
+            <h2>{{ category.name }}</h2>
+            <p>{{ category.description|default:"Stories from our archive." }}</p>
+            <span class="read-link">Open section &rarr;</span>
+        </a>
+    {% endfor %}
+</div>
+
+{% endblock %}

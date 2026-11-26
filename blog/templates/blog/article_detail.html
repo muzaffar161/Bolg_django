@@ -1,0 +1,130 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{{ article.title }} | Frame &amp; Field{% endblock %}
+
+{% block content %}
+
+<article class="story">
+    <header class="story-header">
+        <p class="eyebrow">
+            <a href="{% url 'category_detail' article.category.slug %}" class="text-link">
+                {{ article.category.name|upper }}
+            </a>
+        </p>
+        <h1>{{ article.title }}</h1>
+
+        <div class="story-meta">
+            <a href="{% url 'author_detail' article.author.id %}" class="author-link">
+                {% if article.author.author_profile.avatar %}
+                    <img src="{{ article.author.author_profile.avatar.url }}" alt="">
+                {% endif %}
+                <span>{{ article.author.get_full_name|default:article.author.username }}</span>
+            </a>
+            <span>{{ article.published_at|date:"F j, Y" }}</span>
+            <span>{{ article.reading_time }} min read</span>
+            <span>{{ article.views }} views</span>
+            <span>{{ article.comment_count }} comments</span>
+        </div>
+    </header>
+
+    {% if article.image %}
+        <figure class="story-cover">
+            <img src="{{ article.image.url }}" alt="{{ article.title }}">
+            <figcaption>{{ article.title }}</figcaption>
+        </figure>
+    {% endif %}
+
+    <div class="story-layout">
+        <div class="story-body">
+            <p class="lead">{{ article.excerpt }}</p>
+            {{ article.body|linebreaks }}
+
+            <div class="story-tags">
+                {% for tag in article.tags.all %}
+                    <a href="{% url 'tag_detail' tag.slug %}" class="tag-pill">#{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <aside class="story-sidebar">
+            <div class="sidebar-card">
+                <p class="eyebrow">ABOUT THE AUTHOR</p>
+                <h3>{{ article.author.get_full_name|default:article.author.username }}</h3>
+                <p class="muted">{{ article.author.author_profile.bio|default:"Writer at Frame & Field." }}</p>
+                <a href="{% url 'author_detail' article.author.id %}" class="text-link">View profile &rarr;</a>
+            </div>
+
+            {% if user.is_authenticated and user == article.author or user.is_staff %}
+                <div class="sidebar-card">
+                    <p class="eyebrow">MANAGE STORY</p>
+                    <a href="{% url 'edit_article' article.id %}" class="btn btn-outline btn-block">Edit story</a>
+                    <a href="{% url 'delete_article' article.id %}" class="btn btn-danger btn-block">Delete story</a>
+                </div>
+            {% endif %}
+        </aside>
+    </div>
+</article>
+
+<section class="section" id="comments">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow">DISCUSSION</p>
+            <h2>Comments <span class="count">({{ comments|length }})</span></h2>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'add_comment' article.id %}" class="comment-form">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" class="btn btn-primary">Post comment</button>
+        </form>
+    {% else %}
+        <div class="login-prompt">
+            <p>Want to join the conversation?</p>
+            <a href="{% url 'login' %}?next={% url 'article_detail' article.id %}" class="btn btn-primary btn-sm">
+                Login to comment
+            </a>
+        </div>
+    {% endif %}
+
+    <div class="comment-list">
+        {% for comment in comments %}
+            <article class="comment-card">
+                <div class="comment-head">
+                    <strong>{{ comment.author.username }}</strong>
+                    <span>{{ comment.created_at|date:"M j, Y H:i" }}</span>
+                </div>
+                <p>{{ comment.body|linebreaksbr }}</p>
+            </article>
+        {% empty %}
+            <p class="muted">No comments yet. Be the first to share a thought.</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% if related %}
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">KEEP READING</p>
+                <h2>More from {{ article.category.name }}</h2>
+            </div>
+        </div>
+        <div class="featured-grid">
+            {% for item in related %}
+                <a href="{% url 'article_detail' item.id %}" class="featured-card">
+                    <div class="featured-image">
+                        {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.title }}">{% endif %}
+                    </div>
+                    <div class="featured-body">
+                        <span class="card-badge">{{ item.category.name }}</span>
+                        <h3>{{ item.title }}</h3>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{{ category.name }} | Frame &amp; Field{% endblock %}
+
+{% block content %}
+
+<section class="page-head">
+    <p class="eyebrow">SECTION</p>
+    <h1>{{ category.name }}</h1>
+    <p class="muted">{{ category.description }}</p>
+    <a href="{% url 'category_list' %}" class="btn btn-ghost btn-sm">&larr; All sections</a>
+</section>
+
+{% include "blog/_article_grid.html" %}
+
+{% endblock %}

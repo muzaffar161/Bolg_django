@@ -1,0 +1,78 @@
+{% extends "blog/base.html" %}
+
+{% block title %}My profile | Frame &amp; Field{% endblock %}
+
+{% block content %}
+
+<section class="author-header">
+    <div class="avatar">
+        {% if author.avatar %}
+            <img src="{{ author.avatar.url }}" alt="{{ user.username }}">
+        {% else %}
+            {{ user.username|slice:":1"|upper }}
+        {% endif %}
+    </div>
+    <div>
+        <p class="eyebrow">MY ACCOUNT</p>
+        <h1>{{ user.get_full_name|default:user.username }}</h1>
+        <p class="muted">{{ user.email }}</p>
+    </div>
+</section>
+
+<div class="profile-layout">
+    <section class="profile-card">
+        <h2>Edit profile</h2>
+        <form method="POST" enctype="multipart/form-data" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+    </section>
+
+    <div class="profile-panel">
+        <section class="panel-block">
+            <div class="section-head">
+                <h2>My stories</h2>
+                <a href="{% url 'add_article' %}" class="btn btn-primary btn-sm">Write new</a>
+            </div>
+
+            {% for article in my_articles %}
+                <div class="list-row">
+                    <div>
+                        <strong>
+                            <a href="{% url 'article_detail' article.id %}">{{ article.title }}</a>
+                        </strong>
+                        <p class="muted small">{{ article.category.name }} &middot; {{ article.get_status_display }}</p>
+                    </div>
+                    <a href="{% url 'edit_article' article.id %}" class="btn btn-outline btn-sm">Edit</a>
+                </div>
+            {% empty %}
+                <p class="muted">You have not written any stories yet.</p>
+            {% endfor %}
+        </section>
+
+        <section class="panel-block">
+            <div class="section-head">
+                <h2>My comments</h2>
+            </div>
+
+            {% for comment in my_comments %}
+                <div class="list-row">
+                    <div>
+                        <strong>
+                            <a href="{% url 'article_detail' comment.article.id %}">
+                                {{ comment.article.title }}
+                            </a>
+                        </strong>
+                        <p class="muted small">{{ comment.created_at|date:"M j, Y" }}</p>
+                        <p>{{ comment.body|truncatechars:130 }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="muted">You have not commented yet.</p>
+            {% endfor %}
+        </section>
+    </div>
+</div>
+
+{% endblock %}

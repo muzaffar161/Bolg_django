@@ -1,0 +1,160 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block title %}Frame &amp; Field | Cinema, Sport &amp; Culture{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+    <section class="hero">
+        <div class="hero-content">
+            <p class="eyebrow">THE WEEKLY EDIT</p>
+            <h1>Stories behind the <em>frame</em> and beyond the <em>finish line</em>.</h1>
+            <p class="hero-text">
+                Film criticism, matchday notes and conversations with the people who make
+                culture move. Independent, curious and always in search of a good story.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#latest" class="btn btn-primary">Read the latest</a>
+                <a href="{% url 'about' %}" class="btn btn-light">Our story</a>
+            </div>
+
+            <div class="hero-stats">
+                <div>
+                    <strong>{{ total_articles }}</strong>
+                    <span>Published stories</span>
+                </div>
+                <div>
+                    <strong>4</strong>
+                    <span>Regular sections</span>
+                </div>
+                <div>
+                    <strong>8.4k</strong>
+                    <span>Monthly readers</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-art">
+            <div class="hero-reel">
+                <img src="{% static 'blog/img/logo.svg' %}" alt="Frame and Field logo" class="hero-logo">
+                <video class="hero-video" autoplay muted loop playsinline
+                       poster="{% static 'blog/img/logo.svg' %}">
+                    <source src="{% static 'blog/video/studio-reel.mp4' %}" type="video/mp4">
+                </video>
+            </div>
+            <div class="hero-card card-one">
+                <span class="hero-card-label">CINEMA</span>
+                <strong>Screen notes</strong>
+                <span>What the image keeps after the credits</span>
+            </div>
+            <div class="hero-card card-two">
+                <span class="hero-card-label">SPORT</span>
+                <strong>Field reports</strong>
+                <span>Matchdays, routines and comebacks</span>
+            </div>
+        </div>
+    </section>
+
+    {% if featured %}
+        <section class="section">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">EDITOR'S PICKS</p>
+                    <h2>Featured stories</h2>
+                </div>
+                <a href="{% url 'article_list' %}" class="btn btn-ghost">All stories &rarr;</a>
+            </div>
+
+            <div class="featured-grid">
+                {% for article in featured %}
+                    <a href="{% url 'article_detail' article.id %}" class="featured-card">
+                        <div class="featured-image">
+                            {% if article.image %}
+                                <img src="{{ article.image.url }}" alt="{{ article.title }}">
+                            {% endif %}
+                        </div>
+                        <div class="featured-body">
+                            <span class="card-badge">{{ article.category.name }}</span>
+                            <h3>{{ article.title }}</h3>
+                            <p>{{ article.excerpt|truncatechars:110 }}</p>
+                            <span class="read-link">Read story &rarr;</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+{% else %}
+
+    <section class="guest-hero">
+        <div class="guest-copy">
+            <p class="eyebrow">NO ACCOUNT NEEDED</p>
+            <h1>Cinema, sport and everything in between.</h1>
+            <p class="guest-text">
+                Read freely. No login, no noise — just good stories about what we watch
+                and what we play.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#latest" class="btn btn-primary">Start reading</a>
+                <a href="{% url 'article_list' %}" class="btn btn-light">All stories</a>
+            </div>
+
+            <div class="guest-notes">
+                <span>&#10003; Open archive</span>
+                <span>&#10003; Fresh stories every week</span>
+            </div>
+        </div>
+
+        <div class="guest-showcase">
+            <div class="guest-orbit"></div>
+
+            {% if lead_article %}
+                <a href="{% url 'article_detail' lead_article.id %}"
+                   class="guest-spotlight" id="guestSpotlight">
+                    <div class="guest-spotlight-media">
+                        {% if lead_article.image %}
+                            <img src="{{ lead_article.image.url }}" alt="{{ lead_article.title }}">
+                        {% endif %}
+                        <span class="guest-shine"></span>
+                    </div>
+                    <div class="guest-spotlight-body">
+                        <span class="guest-kicker">TODAY'S PICK</span>
+                        <span class="card-badge">{{ lead_article.category.name }}</span>
+                        <h2>{{ lead_article.title }}</h2>
+                        <p>{{ lead_article.excerpt|truncatechars:100 }}</p>
+                        <span class="read-link">Read story &rarr;</span>
+                    </div>
+                </a>
+            {% endif %}
+
+            <div class="guest-float guest-float-one">
+                <span>CINEMA</span>
+                <strong>Screen notes</strong>
+            </div>
+            <div class="guest-float guest-float-two">
+                <span>SPORT</span>
+                <strong>Field reports</strong>
+            </div>
+        </div>
+    </section>
+
+{% endif %}
+
+<section class="section" id="latest">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow">FRESH OFF THE PRESS</p>
+            <h2>Latest stories</h2>
+        </div>
+        <a href="{% url 'article_list' %}" class="btn btn-outline">Browse archive</a>
+    </div>
+
+    {% include "blog/_article_grid.html" %}
+</section>
+
+{% endblock %}

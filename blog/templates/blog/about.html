@@ -1,0 +1,46 @@
+{% extends "blog/base.html" %}
+
+{% block title %}About | Frame &amp; Field{% endblock %}
+
+{% block content %}
+
+<section class="about-hero">
+    <p class="eyebrow">OUR MANIFESTO</p>
+    <h1>We look closely at the things that move us.</h1>
+    <p>
+        Frame &amp; Field began with a simple observation: the best films and the best
+        matches leave us thinking long after the lights come up or the final whistle blows.
+        We write about that afterlife.
+    </p>
+    <p>
+        Our contributors cover cinema, sport, culture and the conversations in between.
+        No hot takes, no noise - just careful attention and a little curiosity.
+    </p>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow">THE TEAM</p>
+            <h2>Meet the contributors</h2>
+        </div>
+    </div>
+
+    <div class="team-grid">
+        {% for profile in team %}
+            <a href="{% url 'author_detail' profile.user.id %}" class="team-card">
+                <div class="team-avatar">
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="{{ profile.display_name }}">
+                    {% endif %}
+                </div>
+                <h3>{{ profile.display_name }}</h3>
+                <p>{{ profile.bio|truncatechars:90 }}</p>
+            </a>
+        {% empty %}
+            <p class="muted">Run <code>python manage.py seed_demo</code> to add contributors.</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

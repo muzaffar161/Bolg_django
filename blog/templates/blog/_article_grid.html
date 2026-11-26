@@ -1,0 +1,65 @@
+<div class="article-grid">
+
+    {% for article in page_obj %}
+
+        <article class="article-card">
+            <a href="{% url 'article_detail' article.id %}" class="card-image">
+                {% if article.image %}
+                    <img src="{{ article.image.url }}" alt="{{ article.title }}">
+                {% else %}
+                    <span class="image-fallback">{{ article.title|slice:":1" }}</span>
+                {% endif %}
+                <span class="card-badge">{{ article.category.name }}</span>
+            </a>
+
+            <div class="card-body">
+                <div class="card-meta">
+                    <span>{{ article.published_at|date:"M j, Y" }}</span>
+                    <span>{{ article.reading_time }} min read</span>
+                </div>
+
+                <h3>
+                    <a href="{% url 'article_detail' article.id %}">{{ article.title }}</a>
+                </h3>
+
+                <p class="card-excerpt">{{ article.excerpt }}</p>
+
+                <div class="card-footer">
+                    <a href="{% url 'author_detail' article.author.id %}" class="author-link">
+                        {% if article.author.author_profile.avatar %}
+                            <img src="{{ article.author.author_profile.avatar.url }}" alt="">
+                        {% endif %}
+                        <span>{{ article.author.get_full_name|default:article.author.username }}</span>
+                    </a>
+                    <a href="{% url 'article_detail' article.id %}" class="read-link">Read &rarr;</a>
+                </div>
+            </div>
+        </article>
+
+    {% empty %}
+
+        <div class="empty-state">
+            <h3>No stories found</h3>
+            <p>Try another search term or check back soon.</p>
+            <a href="{% url 'article_list' %}" class="btn btn-outline">Browse all stories</a>
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% if page_obj.has_other_pages %}
+    <nav class="pagination" aria-label="Pages">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline btn-sm">&larr; Previous</a>
+        {% endif %}
+
+        <span class="page-number">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline btn-sm">Next &rarr;</a>
+        {% endif %}
+    </nav>
+{% endif %}
